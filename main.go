@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"os/exec"
 	"regexp"
 	"strings"
 
@@ -25,8 +26,23 @@ func reg(s string) bool {
 }
 
 func main() {
+	fmt.Println("getting version")
 	v := getVersions()
-	download(strings.TrimSpace(v))
+	fmt.Println("done")
+	fmt.Println("downloading...")
+	f := download(strings.TrimSpace(v))
+	defer os.Remove(f)
+	fmt.Println("done")
+	fmt.Println("installing...")
+	command := fmt.Sprintf("sudo rm -rf /usr/local/go && sudo tar -C /usr/local -xzf %s", f)
+	cmd := exec.Command("/bin/sh", "-c", command)
+	cmd.Stdin = os.Stdin
+	cmd.Stderr = os.Stderr
+	err := cmd.Run()
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println("done")
 }
 
 func getVersions() string {
@@ -41,7 +57,7 @@ func getVersions() string {
 	return l[0]
 }
 
-func download(version string) {
+func download(version string) string {
 	fullURLFile = fmt.Sprintf("https://go.dev/dl/%s", version)
 
 	fileURL, err := url.Parse(fullURLFile)
@@ -69,11 +85,11 @@ func download(version string) {
 	}
 	defer resp.Body.Close()
 
-	size, err := io.Copy(file, resp.Body)
+	_, err = io.Copy(file, resp.Body)
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer file.Close()
 
-	fmt.Printf("Downloaded a file %s with size %d\n", fileName, size)
+	return fileName
 }
