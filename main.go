@@ -14,35 +14,30 @@ import (
 	"github.com/gocolly/colly/v2"
 )
 
-var (
-	fileName    string
-	fullURLFile string
-)
+func main() {
+	printStatus("getting version")
+	v := getVersions()
+	printStatus("done")
+	printStatus("downloading...")
+	f := download(strings.TrimSpace(v))
+	defer os.Remove(f)
+	printStatus("done")
+	printStatus("installing...")
+	err := install(f)
+	if err != nil {
+		log.Fatal(err)
+	}
+	printStatus("done")
+}
+
+func printStatus(s string) {
+	fmt.Println(s)
+}
 
 func reg(s string) bool {
 	const regex = "go[1-9].([0-9][0-9]).[0-9].(linux-amd64.tar.gz)"
 	r := regexp.MustCompile(regex)
 	return r.Match([]byte(s))
-}
-
-func main() {
-	fmt.Println("getting version")
-	v := getVersions()
-	fmt.Println("done")
-	fmt.Println("downloading...")
-	f := download(strings.TrimSpace(v))
-	defer os.Remove(f)
-	fmt.Println("done")
-	fmt.Println("installing...")
-	command := fmt.Sprintf("sudo rm -rf /usr/local/go && sudo tar -C /usr/local -xzf %s", f)
-	cmd := exec.Command("/bin/sh", "-c", command)
-	cmd.Stdin = os.Stdin
-	cmd.Stderr = os.Stderr
-	err := cmd.Run()
-	if err != nil {
-		log.Fatal(err)
-	}
-	fmt.Println("done")
 }
 
 func getVersions() string {
@@ -58,7 +53,7 @@ func getVersions() string {
 }
 
 func download(version string) string {
-	fullURLFile = fmt.Sprintf("https://go.dev/dl/%s", version)
+	fullURLFile := fmt.Sprintf("https://go.dev/dl/%s", version)
 
 	fileURL, err := url.Parse(fullURLFile)
 	if err != nil {
@@ -66,7 +61,7 @@ func download(version string) string {
 	}
 	path := fileURL.Path
 	segments := strings.Split(path, "/")
-	fileName = segments[len(segments)-1]
+	fileName := segments[len(segments)-1]
 
 	file, err := os.Create(fileName)
 	if err != nil {
@@ -92,4 +87,16 @@ func download(version string) string {
 	defer file.Close()
 
 	return fileName
+}
+
+func install(f string) error {
+	command := fmt.Sprintf("sudo rm -rf /usr/local/go && sudo tar -C /usr/local -xzf %s", f)
+	cmd := exec.Command("/bin/sh", "-c", command)
+	cmd.Stdin = os.Stdin
+	cmd.Stderr = os.Stderr
+	err := cmd.Run()
+	if err != nil {
+		return err
+	}
+	return nil
 }
