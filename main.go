@@ -3,14 +3,14 @@ package main
 import (
 	"log"
 	"os"
-	"strings"
 )
 
 func main() {
+	url := "https://go.dev/dl/"
 	printStatus("getting version")
-	v := getVersions()
+	v := getVersions(url)
 	printStatus("done")
-	f, err := download(strings.TrimSpace(v))
+	f, err := download(url, v)
 	if err != nil {
 		log.Fatal(err)
 	}

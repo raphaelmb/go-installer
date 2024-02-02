@@ -1,8 +1,12 @@
 package main
 
-import "github.com/gocolly/colly/v2"
+import (
+	"strings"
 
-func getVersions() string {
+	"github.com/gocolly/colly/v2"
+)
+
+func getVersions(url string) string {
 	c := colly.NewCollector()
 	l := []string{}
 	c.OnHTML(".filename", func(h *colly.HTMLElement) {
@@ -10,6 +14,6 @@ func getVersions() string {
 			l = append(l, h.Text)
 		}
 	})
-	c.Visit("https://go.dev/dl/")
-	return l[0]
+	c.Visit(url)
+	return strings.TrimSpace(l[0])
 }

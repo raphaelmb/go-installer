@@ -11,8 +11,8 @@ import (
 	"github.com/schollz/progressbar/v3"
 )
 
-func download(version string) (string, error) {
-	fullURLFile := fmt.Sprintf("https://go.dev/dl/%s", version)
+func download(fullUrl, version string) (string, error) {
+	fullURLFile := fmt.Sprintf("%s%s", fullUrl, version)
 
 	fileURL, err := url.Parse(fullURLFile)
 	if err != nil {
