@@ -11,9 +11,9 @@ func getVersions(url string) string {
 	l := []string{}
 	c.OnHTML(".filename", func(h *colly.HTMLElement) {
 		if reg(h.Text) {
-			l = append(l, h.Text)
+			l = append(l, strings.TrimSpace(h.Text))
 		}
 	})
 	c.Visit(url)
-	return strings.TrimSpace(l[0])
+	return l[0]
 }
