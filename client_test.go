@@ -49,47 +49,28 @@ func TestDownloadSuccess(t *testing.T) {
 	}
 }
 
-func TestDownloadErrParsingURL(t *testing.T) {
+func TestDownloadFailure(t *testing.T) {
 	f := CreateFile(t)
 	defer f.Close()
 	defer os.Remove(f.Name())
 	server := StartServer(t, f)
 	defer server.Close()
 
-	expectedErr := "error parsing file URL"
-
-	_, err := download(server.URL, f.Name())
-	if err.Error() != expectedErr {
-		t.Errorf("expected '%s' but got '%s'", expectedErr, err)
+	tests := []struct {
+		Name      string
+		Expected  string
+		ServerURL string
+		Filename  string
+	}{
+		{"Error parsing URL", "error parsing file URL", server.URL, f.Name()},
+		{"Error creating file", "error creating file", server.URL + "/", ""},
+		{"Error getting file", "error getting file", "/", f.Name()},
 	}
-}
 
-func TestDownloadErrCreatingFile(t *testing.T) {
-	f := CreateFile(t)
-	defer f.Close()
-	defer os.Remove(f.Name())
-	server := StartServer(t, f)
-	defer server.Close()
-
-	expectedErr := "error creating file"
-
-	_, err := download(server.URL+"/", "")
-	if err.Error() != expectedErr {
-		t.Errorf("expected '%s' but got '%s'", expectedErr, err)
-	}
-}
-
-func TestDownloadErrGettingFile(t *testing.T) {
-	f := CreateFile(t)
-	defer f.Close()
-	defer os.Remove(f.Name())
-	server := StartServer(t, f)
-	defer server.Close()
-
-	expectedErr := "error getting file"
-
-	_, err := download("/", f.Name())
-	if err.Error() != expectedErr {
-		t.Errorf("expected '%s' but got '%s'", expectedErr, err)
+	for _, v := range tests {
+		_, err := download(v.ServerURL, v.Filename)
+		if err.Error() != v.Expected {
+			t.Errorf("%s: expected '%s' but got '%s'", v.Name, v.Expected, err.Error())
+		}
 	}
 }
