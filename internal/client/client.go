@@ -1,4 +1,4 @@
-package main
+package client
 
 import (
 	"fmt"
@@ -11,7 +11,7 @@ import (
 	"github.com/schollz/progressbar/v3"
 )
 
-func download(fullUrl, version string) (string, error) {
+func Download(fullUrl, version string) (string, error) {
 	fullURLFile := fmt.Sprintf("%s%s", fullUrl, version)
 
 	fileURL, err := url.Parse(fullURLFile)
@@ -26,13 +26,8 @@ func download(fullUrl, version string) (string, error) {
 	if err != nil {
 		return "", fmt.Errorf("error creating file")
 	}
-	client := http.Client{
-		CheckRedirect: func(r *http.Request, via []*http.Request) error {
-			r.URL.Opaque = r.URL.Path
-			return nil
-		},
-	}
 
+	var client http.Client
 	resp, err := client.Get(fullURLFile)
 	if err != nil {
 		return "", fmt.Errorf("error getting file")

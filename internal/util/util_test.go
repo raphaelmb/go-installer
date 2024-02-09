@@ -1,4 +1,4 @@
-package main
+package util
 
 import (
 	"fmt"
@@ -12,7 +12,7 @@ func TestPrintStatus(t *testing.T) {
 	r, w, _ := os.Pipe()
 	os.Stdout = w
 
-	printStatus("testing")
+	PrintStatus("testing")
 	_ = w.Close()
 
 	os.Stdout = oldStdOut
@@ -39,7 +39,7 @@ func TestReg(t *testing.T) {
 	}
 
 	for _, e := range tests {
-		result := reg(e.content)
+		result := Reg(e.content)
 		if e.expected != result {
 			t.Errorf("%s: expected %t but got %t", e.name, e.expected, result)
 		}

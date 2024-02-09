@@ -1,4 +1,4 @@
-package main
+package installer
 
 import (
 	"fmt"
@@ -6,7 +6,7 @@ import (
 	"os/exec"
 )
 
-func install(f string) error {
+func Install(f string) error {
 	command := fmt.Sprintf("sudo rm -rf /usr/local/go && sudo tar -C /usr/local -xzf %s", f)
 	cmd := exec.Command("/bin/sh", "-c", command)
 	cmd.Stdin = os.Stdin
