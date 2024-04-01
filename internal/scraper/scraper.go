@@ -7,7 +7,7 @@ import (
 	"github.com/raphaelmb/go-update/internal/util"
 )
 
-func GetVersions(url string, pag int) []string {
+func Scrape(url string) string {
 	c := colly.NewCollector()
 	l := []string{}
 	c.OnHTML(".filename", func(h *colly.HTMLElement) {
@@ -16,17 +16,5 @@ func GetVersions(url string, pag int) []string {
 		}
 	})
 	c.Visit(url)
-	return pagination(pag, l)
-}
-
-func pagination(n int, l []string) []string {
-	l = l[1:]
-	switch {
-	case n == 0:
-		return l[:1]
-	case n > 0:
-		return l[:n]
-	default:
-		return l[:3]
-	}
+	return l[0]
 }

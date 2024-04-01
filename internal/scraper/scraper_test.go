@@ -31,21 +31,6 @@ func StartServer() *httptest.Server {
 										<a class="download" href="/dl/go1.21.5.linux-amd64.tar.gz">go1.21.5.linux-amd64.tar.gz</a>
 									</td>
 								</tr>
-								<tr>
-									<td class="filename">
-										<a class="download" href="/dl/go1.21.4.linux-amd64.tar.gz">go1.21.4.linux-amd64.tar.gz</a>
-									</td>
-								</tr>
-								<tr>
-									<td class="filename">
-										<a class="download" href="/dl/go1.21.4.linux-amd64.tar.gz">go1.21.4.linux-amd64.tar.gz</a>
-									</td>
-								</tr>
-								<tr>
-									<td class="filename">
-										<a class="download" href="/dl/go1.21.4.linux-amd64.tar.gz">go1.21.4.linux-amd64.tar.gz</a>
-									</td>
-								</tr>
 							</tbody>
 						</table>
 					</div>
@@ -61,21 +46,16 @@ func TestGetVersion(t *testing.T) {
 
 	tests := []struct {
 		Name     string
-		Expected []string
-		Pag      int
+		Expected string
 	}{
-		{"Case latest", []string{"go1.21.4.linux-amd64.tar.gz"}, 0},
-		{"Case 2", []string{"go1.21.4.linux-amd64.tar.gz", "go1.21.4.linux-amd64.tar.gz"}, 2},
-		{"Case 4", []string{"go1.21.4.linux-amd64.tar.gz", "go1.21.4.linux-amd64.tar.gz", "go1.21.4.linux-amd64.tar.gz", "go1.21.4.linux-amd64.tar.gz"}, 4},
-		{"Case default", []string{"go1.21.4.linux-amd64.tar.gz", "go1.21.4.linux-amd64.tar.gz", "go1.21.4.linux-amd64.tar.gz"}, -1},
+		{"Case latest", "go1.21.6.linux-amd64.tar.gz"},
 	}
 
 	for _, v := range tests {
-		value := GetVersions(server.URL, v.Pag)
-		if len(value) != len(v.Expected) {
-			t.Errorf("%s: expected length '%d', got '%d'", v.Name, len(v.Expected), len(value))
+		value := Scrape(server.URL)
+		if value != v.Expected {
+			t.Errorf("%s: expected %s but got %s", v.Name, v.Expected, value)
 		}
-
 	}
 
 }
