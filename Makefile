@@ -5,6 +5,6 @@ run:
 	@go run cmd/main.go
 
 build:
-	@go build -o go-install ./cmd/main.go
+	@go build -o bin/go-install ./cmd/main.go
 
 .PHONY: run
