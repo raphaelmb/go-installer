@@ -9,12 +9,12 @@ import (
 
 func Scrape(url string) string {
 	c := colly.NewCollector()
-	l := []string{}
-	c.OnHTML(".filename", func(h *colly.HTMLElement) {
+	var l string
+	c.OnHTML("div.filename > span", func(h *colly.HTMLElement) {
 		if util.Reg(h.Text) {
-			l = append(l, strings.TrimSpace(h.Text))
+			l = strings.TrimSpace(h.Text)
 		}
 	})
 	c.Visit(url)
-	return l[0]
+	return l
 }

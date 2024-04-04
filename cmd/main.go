@@ -15,17 +15,16 @@ func main() {
 	url := "https://go.dev/dl/"
 	version := scraper.Scrape(url)
 	fmt.Println("latest version:", version)
-	util.PrintStatus("done")
 	f, err := client.Download(url, version)
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer os.Remove(f)
-	util.PrintStatus("done")
 	util.PrintStatus("installing...")
 	err = installer.Install(f)
 	if err != nil {
 		log.Fatal(err)
 	}
 	util.PrintStatus("done")
+	util.PrintStatus("Remember to add /usr/local/go/bin to the PATH environment variable if needed")
 }

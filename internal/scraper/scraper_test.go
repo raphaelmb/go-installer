@@ -17,22 +17,8 @@ func StartServer() *httptest.Server {
   			<title></title>
 			</head>
 			<body>
-					<div>
-						<table>
-							<thead></thead>
-							<tbody>
-								<tr>
-									<td class="filename">
-										<a class="download" href="/dl/go1.21.6.linux-amd64.tar.gz">go1.21.6.linux-amd64.tar.gz</a>
-									</td>
-								</tr>
-								<tr>
-									<td class="filename">
-										<a class="download" href="/dl/go1.21.5.linux-amd64.tar.gz">go1.21.5.linux-amd64.tar.gz</a>
-									</td>
-								</tr>
-							</tbody>
-						</table>
+					<div class="filename">
+						<span>go1.21.6.linux-amd64.tar.gz</span>
 					</div>
 			</body>
 			</html>
