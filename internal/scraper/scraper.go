@@ -7,7 +7,7 @@ import (
 	"github.com/raphaelmb/go-update/internal/util"
 )
 
-func Scrape(url string) string {
+func Scrape(url string) (string, error) {
 	c := colly.NewCollector()
 	var l string
 	c.OnHTML("div.filename > span", func(h *colly.HTMLElement) {
@@ -15,6 +15,9 @@ func Scrape(url string) string {
 			l = strings.TrimSpace(h.Text)
 		}
 	})
-	c.Visit(url)
-	return l
+	err := c.Visit(url)
+	if err != nil {
+		return "", err
+	}
+	return l, nil
 }

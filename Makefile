@@ -7,4 +7,4 @@ run:
 build:
 	@go build -o bin/go-install ./cmd/main.go
 
-.PHONY: run
+.PHONY: run test build

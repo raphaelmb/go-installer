@@ -38,7 +38,10 @@ func TestGetVersion(t *testing.T) {
 	}
 
 	for _, v := range tests {
-		value := Scrape(server.URL)
+		value, err := Scrape(server.URL)
+		if err != nil {
+			t.Errorf("error: %s", err)
+		}
 		if value != v.Expected {
 			t.Errorf("%s: expected %s but got %s", v.Name, v.Expected, value)
 		}

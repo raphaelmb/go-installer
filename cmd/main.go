@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"os"
 
 	"github.com/raphaelmb/go-update/internal/client"
@@ -13,17 +12,23 @@ import (
 
 func main() {
 	url := "https://go.dev/dl/"
-	version := scraper.Scrape(url)
+	version, err := scraper.Scrape(url)
+	if err != nil {
+		fmt.Println("error fetching go version:", err)
+		return
+	}
 	fmt.Println("latest version:", version)
 	f, err := client.Download(url, version)
 	if err != nil {
-		log.Fatal(err)
+		fmt.Println("error:", err)
+		return
 	}
 	defer os.Remove(f)
 	util.PrintStatus("installing...")
 	err = installer.Install(f)
 	if err != nil {
-		log.Fatal(err)
+		fmt.Println("error installing:", err)
+		return
 	}
 	util.PrintStatus("done")
 	util.PrintStatus("Remember to add /usr/local/go/bin to the PATH environment variable if needed")
