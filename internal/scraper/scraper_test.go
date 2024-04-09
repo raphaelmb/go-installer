@@ -30,14 +30,14 @@ func TestGetVersion(t *testing.T) {
 	server := StartServer()
 	defer server.Close()
 
-	tests := []struct {
+	testsSuccess := []struct {
 		Name     string
 		Expected string
 	}{
 		{"Case latest", "go1.21.6.linux-amd64.tar.gz"},
 	}
 
-	for _, v := range tests {
+	for _, v := range testsSuccess {
 		value, err := Scrape(server.URL)
 		if err != nil {
 			t.Errorf("error: %s", err)
@@ -47,4 +47,20 @@ func TestGetVersion(t *testing.T) {
 		}
 	}
 
+	testsFailure := []struct {
+		Name     string
+		Expected string
+	}{
+		{"Case version not found", "Not Found"},
+	}
+
+	for _, v := range testsFailure {
+		value, err := Scrape("https://go.dev/dl/123")
+		if value != "" {
+			t.Error("error: value should be empty")
+		}
+		if err.Error() != v.Expected {
+			t.Errorf("%s: expected %s but got %s", v.Name, v.Expected, err.Error())
+		}
+	}
 }
