@@ -1,0 +1,11 @@
+# Go Installer
+
+This project installs [Go](https://go.dev/) on Linux. If it is already installed, it upgrades to the latest version.
+
+## Steps
+
+Download the binary on the [releases](https://github.com/raphaelmb/go-installer/releases) page.
+
+Grant execute permission to the binary `chmod +x go-installer`
+
+Run `./go-installer`
