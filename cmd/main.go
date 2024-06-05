@@ -17,6 +17,10 @@ func main() {
 		fmt.Println("error fetching go version:", err)
 		return
 	}
+	if util.CheckCurrentVersion(version) {
+		fmt.Println("most current version installed already")
+		return
+	}
 	fmt.Println("latest version:", version)
 	f, err := client.Download(url, version)
 	if err != nil {
@@ -31,5 +35,5 @@ func main() {
 		return
 	}
 	util.PrintStatus("done")
-	util.PrintStatus("Remember to add /usr/local/go/bin to the PATH environment variable if needed")
+	util.PrintStatus("remember to add /usr/local/go/bin to the PATH environment variable if needed")
 }

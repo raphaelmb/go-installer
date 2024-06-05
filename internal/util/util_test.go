@@ -45,3 +45,24 @@ func TestReg(t *testing.T) {
 		}
 	}
 }
+
+func TestSanitize(t *testing.T) {
+	tests := []struct {
+		name     string
+		content  string
+		expected string
+	}{
+		{"success", "go1.20.2.linux-amd64.tar.gz", "go1.20.2"},
+		{"success", "go1.21.2.linux-amd64.tar.gz", "go1.21.2"},
+		{"success", "go1.19.2.linux-amd64.tar.gz", "go1.19.2"},
+		{"success", "go1.1.1", "go1.1.1"},
+	}
+
+	for _, e := range tests {
+		result := Sanitize(e.content)
+		if e.expected != result {
+			t.Errorf("%s: expected %s but got %s", e.name, e.expected, result)
+		}
+	}
+
+}
