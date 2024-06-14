@@ -18,10 +18,10 @@ func main() {
 		return
 	}
 	if util.CheckCurrentVersion(version) {
-		fmt.Println("most current version installed already")
+		fmt.Println("latest version already installed")
 		return
 	}
-	fmt.Println("latest version:", version)
+	fmt.Println("latest version:", util.Sanitize(version))
 	f, err := client.Download(url, version)
 	if err != nil {
 		fmt.Println("error:", err)
