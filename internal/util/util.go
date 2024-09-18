@@ -23,6 +23,5 @@ func Sanitize(str string) string {
 }
 
 func CheckCurrentVersion(dl string) bool {
-	currentVersion := runtime.Version()
-	return currentVersion == Sanitize(dl)
+	return runtime.Version() == Sanitize(dl)
 }
