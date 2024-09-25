@@ -17,13 +17,3 @@ jobs:
       - name: Testing
         run: |
           go test ./...
-      - name: Generate binary
-        run: |
-          make build
-      - name: Upload binary
-        uses: softprops/action-gh-release@v2
-        if: startsWith(github.ref, 'refs/tags/')
-        with:
-          files: ./bin/go-installer
-          make_latest: true
-
