@@ -1,8 +1,10 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"os"
+	"os/signal"
 
 	"github.com/raphaelmb/go-update/internal/client"
 	"github.com/raphaelmb/go-update/internal/installer"
@@ -11,6 +13,14 @@ import (
 )
 
 func main() {
+	signals := make(chan os.Signal, 1)
+	signal.Notify(signals, os.Interrupt)
+	ctx, cancel := context.WithCancel(context.Background())
+	go func() {
+		<-signals
+		cancel()
+	}()
+
 	url := "https://go.dev/dl/"
 	version, err := scraper.Scrape(url)
 	if err != nil {
@@ -22,7 +32,7 @@ func main() {
 		return
 	}
 	fmt.Println("latest version:", util.Sanitize(version))
-	f, err := client.Download(url, version)
+	f, err := client.Download(ctx, url, version)
 	if err != nil {
 		fmt.Println("error:", err)
 		return

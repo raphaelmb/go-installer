@@ -1,6 +1,8 @@
 package client
 
 import (
+	"context"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -11,7 +13,7 @@ import (
 	"github.com/schollz/progressbar/v3"
 )
 
-func Download(fullUrl, version string) (string, error) {
+func Download(ctx context.Context, fullUrl, version string) (string, error) {
 	fullURLFile := fmt.Sprintf("%s%s", fullUrl, version)
 
 	fileURL, err := url.Parse(fullURLFile)
@@ -26,9 +28,15 @@ func Download(fullUrl, version string) (string, error) {
 	if err != nil {
 		return "", fmt.Errorf("error creating file")
 	}
+	defer file.Close()
+
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, fullURLFile, nil)
+	if err != nil {
+		return "", fmt.Errorf("error making request")
+	}
 
 	var client http.Client
-	resp, err := client.Get(fullURLFile)
+	resp, err := client.Do(req)
 	if err != nil {
 		return "", fmt.Errorf("error getting file")
 	}
@@ -37,9 +45,13 @@ func Download(fullUrl, version string) (string, error) {
 	bar := progressbar.DefaultBytes(resp.ContentLength, "downloading")
 	_, err = io.Copy(io.MultiWriter(file, bar), resp.Body)
 	if err != nil {
-		return "", fmt.Errorf("error writing file")
+		if errors.Is(err, context.Canceled) {
+			fmt.Println("\naborted by user")
+			os.Remove(fileName)
+			os.Exit(0)
+		}
+		return "", fmt.Errorf("error writing file: %w", err)
 	}
-	defer file.Close()
 
 	return fileName, nil
 }

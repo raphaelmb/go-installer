@@ -1,6 +1,7 @@
 package client
 
 import (
+	"context"
 	"io"
 	"net/http"
 	"net/http/httptest"
@@ -38,7 +39,7 @@ func TestDownloadSuccess(t *testing.T) {
 	server := StartServer(t, f)
 	defer server.Close()
 
-	value, err := Download(server.URL+"/", f.Name())
+	value, err := Download(context.Background(), server.URL+"/", f.Name())
 	if err != nil {
 		t.Errorf("error downloading file: %v\n", err)
 	}
@@ -68,7 +69,7 @@ func TestDownloadFailure(t *testing.T) {
 	}
 
 	for _, v := range tests {
-		_, err := Download(v.ServerURL, v.Filename)
+		_, err := Download(context.Background(), v.ServerURL, v.Filename)
 		if err.Error() != v.Expected {
 			t.Errorf("%s: expected '%s' but got '%s'", v.Name, v.Expected, err.Error())
 		}
