@@ -2,8 +2,8 @@ package util
 
 import (
 	"fmt"
+	"os/exec"
 	"regexp"
-	"runtime"
 	"strings"
 )
 
@@ -23,5 +23,15 @@ func Sanitize(str string) string {
 }
 
 func CheckCurrentVersion(dl string) bool {
-	return runtime.Version() == Sanitize(dl)
+	return GetCurrentVersion() == Sanitize(dl)
+}
+
+func GetCurrentVersion() string {
+	cmd := exec.Command("go", "version")
+	output, err := cmd.CombinedOutput()
+	if err != nil {
+		return ""
+	}
+	v := strings.Split(string(output), " ")
+	return v[2]
 }
