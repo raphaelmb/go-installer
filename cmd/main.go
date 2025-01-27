@@ -12,6 +12,8 @@ import (
 	"github.com/raphaelmb/go-update/internal/util"
 )
 
+const url = "https://go.dev/dl/"
+
 func main() {
 	signals := make(chan os.Signal, 1)
 	signal.Notify(signals, os.Interrupt)
@@ -21,7 +23,7 @@ func main() {
 		cancel()
 	}()
 
-	url := "https://go.dev/dl/"
+	fmt.Println("current version:", util.GetCurrentVersion())
 	version, err := scraper.Scrape(url)
 	if err != nil {
 		fmt.Println("error fetching go version:", err)
@@ -32,6 +34,7 @@ func main() {
 		return
 	}
 	fmt.Println("latest version:", util.Sanitize(version))
+	fmt.Println("downloading...")
 	f, err := client.Download(ctx, url, version)
 	if err != nil {
 		fmt.Println("error:", err)

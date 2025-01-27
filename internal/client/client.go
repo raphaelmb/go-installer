@@ -9,8 +9,6 @@ import (
 	"net/url"
 	"os"
 	"strings"
-
-	"github.com/schollz/progressbar/v3"
 )
 
 func Download(ctx context.Context, fullUrl, version string) (string, error) {
@@ -42,8 +40,7 @@ func Download(ctx context.Context, fullUrl, version string) (string, error) {
 	}
 	defer resp.Body.Close()
 
-	bar := progressbar.DefaultBytes(resp.ContentLength, "downloading")
-	_, err = io.Copy(io.MultiWriter(file, bar), resp.Body)
+	_, err = io.Copy(file, resp.Body)
 	if err != nil {
 		if errors.Is(err, context.Canceled) {
 			fmt.Println("\naborted by user")
