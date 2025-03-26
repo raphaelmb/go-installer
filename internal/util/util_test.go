@@ -12,13 +12,13 @@ func TestPrintStatus(t *testing.T) {
 	r, w, _ := os.Pipe()
 	os.Stdout = w
 
-	PrintStatus("testing")
+	PrintInfo("testing")
 	_ = w.Close()
 
 	os.Stdout = oldStdOut
 
 	out, _ := io.ReadAll(r)
-	expected := fmt.Sprintf("%s\n", "testing")
+	expected := fmt.Sprint(INFO+"info "+RESET, "testing\n")
 
 	if string(out) != expected {
 		t.Errorf(`"%s" expected but got: %s`, expected, string(out))

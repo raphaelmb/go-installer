@@ -23,30 +23,30 @@ func main() {
 		cancel()
 	}()
 
-	fmt.Println("current version:", util.GetCurrentVersion())
+	util.PrintInfo(fmt.Sprint("current version ", util.GetCurrentVersion()))
 	version, err := scraper.Scrape(url)
 	if err != nil {
-		fmt.Println("error fetching go version:", err)
+		util.PrintError(fmt.Sprint("error fetching go version: ", err))
 		return
 	}
 	if util.CheckCurrentVersion(version) {
-		fmt.Println("latest version already installed")
+		util.PrintInfo("latest version already installed")
 		return
 	}
-	fmt.Println("latest version:", util.Sanitize(version))
-	fmt.Println("downloading...")
+	util.PrintInfo(fmt.Sprint("latest version ", util.Sanitize(version)))
+	util.PrintInfo("downloading")
 	f, err := client.Download(ctx, url, version)
 	if err != nil {
 		fmt.Println("error:", err)
 		return
 	}
 	defer os.Remove(f)
-	util.PrintStatus("installing...")
+	util.PrintInfo("installing")
 	err = installer.Install(f)
 	if err != nil {
-		fmt.Println("error installing:", err)
+		util.PrintError(fmt.Sprint("error installing: ", err))
 		return
 	}
-	util.PrintStatus("done")
-	util.PrintStatus("remember to add /usr/local/go/bin to the PATH environment variable if needed")
+	util.PrintInfo("done")
+	util.PrintInfo("remember to add /usr/local/go/bin to the PATH environment variable if needed")
 }

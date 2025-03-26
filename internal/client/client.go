@@ -9,6 +9,8 @@ import (
 	"net/url"
 	"os"
 	"strings"
+
+	"github.com/raphaelmb/go-update/internal/util"
 )
 
 func Download(ctx context.Context, fullUrl, version string) (string, error) {
@@ -30,6 +32,11 @@ func Download(ctx context.Context, fullUrl, version string) (string, error) {
 
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, fullURLFile, nil)
 	if err != nil {
+		if errors.Is(err, context.Canceled) {
+			// fmt.Println("\naborted by user")
+			util.PrintError("aborted by user")
+			os.Exit(0)
+		}
 		return "", fmt.Errorf("error making request")
 	}
 
@@ -43,7 +50,8 @@ func Download(ctx context.Context, fullUrl, version string) (string, error) {
 	_, err = io.Copy(file, resp.Body)
 	if err != nil {
 		if errors.Is(err, context.Canceled) {
-			fmt.Println("\naborted by user")
+			// fmt.Println("\naborted by user")
+			util.PrintError("aborted by user")
 			os.Remove(fileName)
 			os.Exit(0)
 		}
