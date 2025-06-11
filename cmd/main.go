@@ -23,7 +23,13 @@ func main() {
 		cancel()
 	}()
 
-	util.PrintInfo(fmt.Sprint("current version ", util.GetCurrentVersion()))
+	currentVersion := util.GetCurrentVersion()
+
+	if currentVersion == "" {
+		util.PrintInfo("go not installed")
+	} else {
+		util.PrintInfo(fmt.Sprint("current version ", currentVersion))
+	}
 	version, err := scraper.Scrape(url)
 	if err != nil {
 		util.PrintError(fmt.Sprint("error fetching go version: ", err))
@@ -48,5 +54,7 @@ func main() {
 		return
 	}
 	util.PrintInfo("done")
-	util.PrintInfo("remember to add /usr/local/go/bin to the PATH environment variable if needed")
+	if currentVersion == "" {
+		util.PrintInfo("remember to add /usr/local/go/bin to the PATH environment variable")
+	}
 }
