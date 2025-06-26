@@ -14,15 +14,15 @@ const WARN = "\033[33;1m"
 const INFO = "\033[97;1m"
 
 func PrintInfo(s string) {
-	fmt.Println(INFO + "info " + RESET + s)
+	fmt.Println(INFO + "info: " + RESET + s)
 }
 
 func PrintWarn(s string) {
-	fmt.Println(WARN + "warn " + RESET + s)
+	fmt.Println(WARN + "warn: " + RESET + s)
 }
 
 func PrintError(s string) {
-	fmt.Println(ERROR + "error " + RESET + s)
+	fmt.Println(ERROR + "error: " + RESET + s)
 }
 
 func Reg(s string) bool {
