@@ -18,7 +18,7 @@ func TestPrintStatus(t *testing.T) {
 	os.Stdout = oldStdOut
 
 	out, _ := io.ReadAll(r)
-	expected := fmt.Sprint(INFO+"info "+RESET, "testing\n")
+	expected := fmt.Sprint(INFO+"info: "+RESET, "testing\n")
 
 	if string(out) != expected {
 		t.Errorf(`"%s" expected but got: %s`, expected, string(out))
