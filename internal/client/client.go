@@ -9,8 +9,6 @@ import (
 	"net/url"
 	"os"
 	"strings"
-
-	"github.com/raphaelmb/go-update/internal/util"
 )
 
 func Download(ctx context.Context, fullUrl, version string) (string, error) {
@@ -26,36 +24,31 @@ func Download(ctx context.Context, fullUrl, version string) (string, error) {
 
 	file, err := os.Create(fileName)
 	if err != nil {
-		return "", fmt.Errorf("error creating file")
+		return fileName, fmt.Errorf("error creating file")
 	}
 	defer file.Close()
 
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, fullURLFile, nil)
 	if err != nil {
 		if errors.Is(err, context.Canceled) {
-			// fmt.Println("\naborted by user")
-			util.PrintError("aborted by user")
-			os.Exit(0)
+			return fileName, fmt.Errorf("aborted by user")
 		}
-		return "", fmt.Errorf("error making request")
+		return fileName, fmt.Errorf("error making request")
 	}
 
 	var client http.Client
 	resp, err := client.Do(req)
 	if err != nil {
-		return "", fmt.Errorf("error getting file")
+		return fileName, fmt.Errorf("error getting file")
 	}
 	defer resp.Body.Close()
 
 	_, err = io.Copy(file, resp.Body)
 	if err != nil {
 		if errors.Is(err, context.Canceled) {
-			// fmt.Println("\naborted by user")
-			util.PrintError("aborted by user")
-			os.Remove(fileName)
-			os.Exit(0)
+			return fileName, fmt.Errorf("aborted by user")
 		}
-		return "", fmt.Errorf("error writing file: %w", err)
+		return fileName, fmt.Errorf("error writing file: %w", err)
 	}
 
 	return fileName, nil

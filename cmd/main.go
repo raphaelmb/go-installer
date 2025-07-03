@@ -39,11 +39,12 @@ func main() {
 		util.PrintInfo("latest version already installed")
 		return
 	}
-	util.PrintInfo(fmt.Sprint("latest version ", util.Sanitize(version)))
+	util.PrintInfo(fmt.Sprintf("latest version '%s'", util.Sanitize(version)))
 	util.PrintInfo("downloading...")
 	f, err := client.Download(ctx, url, version)
 	if err != nil {
-		fmt.Println("error:", err)
+		util.PrintError(err.Error())
+		os.Remove(f)
 		return
 	}
 	defer os.Remove(f)
@@ -53,7 +54,7 @@ func main() {
 		util.PrintError(fmt.Sprintf("error installing '%s'", err.Error()))
 		return
 	}
-	util.PrintInfo("done")
+	util.PrintInfo("done.")
 	if currentVersion == "" {
 		util.PrintInfo("remember to add /usr/local/go/bin to the PATH environment variable")
 	}
